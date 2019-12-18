@@ -13,4 +13,11 @@ public class Cash {
     private Long id;
     private String nominal;
     private Integer amount;
+
+    public Cash(Integer amount){
+        this.amount = amount;
+        id = 1L;
+        nominal = "";
+
+    }
 }

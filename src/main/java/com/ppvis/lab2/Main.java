@@ -53,7 +53,7 @@ public class Main {
                     numberOfCardField.setText("");
                     pinCodeField.setText("");
                 }
-                if (AuthorizationSystem.authorize(number, pinCode).isPresent()) {
+                if (new AuthorizationSystem(number).authorize(number, pinCode).isPresent()) {
                     Creator.getUserUI(number);
                 } else {
                     numberOfCardField.setText("");

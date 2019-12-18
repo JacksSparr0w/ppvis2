@@ -7,12 +7,12 @@ import com.ppvis.lab2.ui.SupervisorMode;
 import com.ppvis.lab2.ui.UserUI;
 
 public class Creator {
-    static BankAccount getBankAccount() {
-        return new BankAccount();
+    public static BankAccount getBankAccount(Integer number) {
+        return new BankAccount(number);
     }
 
-    static Cash getCash() {
-        return new Cash();
+    public static Cash getCash(Integer amount) {
+        return new Cash(amount);
     }
 
     static UserUI getUserUI(Integer number) {

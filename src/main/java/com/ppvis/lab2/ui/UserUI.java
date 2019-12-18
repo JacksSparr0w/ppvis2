@@ -2,6 +2,7 @@ package com.ppvis.lab2.ui;
 
 import com.ppvis.lab2.AuthorizationSystem;
 import com.ppvis.lab2.Creator;
+import com.ppvis.lab2.bean.ATM;
 import com.ppvis.lab2.bean.Card;
 import com.ppvis.lab2.bean.Cash;
 
@@ -17,8 +18,9 @@ public class UserUI implements UserMode {
     private JFrame frame;
     private Container container;
     private JPanel mainPanel;
+    private boolean authentificate;
 
-    public UserUI(Integer number){
+    public UserUI(Integer number) {
         this.numberOfBankAccount = number;
         createInterface();
         frame = new JFrame();
@@ -31,8 +33,30 @@ public class UserUI implements UserMode {
         takeCashButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                authentificate();
+                if (!authentificate) {
+                    return;
+                }
                 JDialog dialog = new JDialog(frame, "Снять наличные");
+                JTextField summa = new JTextField("Сумма");
+                JLabel label = new JLabel("Доступно: " + ATM.getInstance().getBalance(numberOfBankAccount) + " BYN"); //TODO
+                JButton button = new JButton("Подтвердить");
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        Integer amount = null;
+                        try {
+                            amount = Integer.valueOf(summa.getText());
+                        } catch (NumberFormatException e) {
+                            dialog.dispose();
+                        }
+                        takeCash(Creator.getCash(amount));
+                    }
+                });
+
+                dialog.setSize(250, 250);
+                dialog.setVisible(true);
+
 
             }
         });
@@ -70,11 +94,11 @@ public class UserUI implements UserMode {
     }
 
     void takeCash(Cash cash) {
-
+        ATM.getInstance().takeCash(numberOfBankAccount, cash);
     }
 
     void fillBalance(Cash cash) {
-
+        ATM.getInstance().fillBalance(numberOfBankAccount, cash);
     }
 
     void viewBalance() {
@@ -85,7 +109,7 @@ public class UserUI implements UserMode {
 
     }
 
-    private void authentificate(Integer number, Integer pinCode){
+    private void authentificate() {
         JDialog dialog = new JDialog(frame, "Введите пин-код");
         JTextField pinCodeField = new JTextField("пин-код");
         JButton button = new JButton("ввод");
@@ -96,18 +120,17 @@ public class UserUI implements UserMode {
                 try {
                     pinCode = Integer.valueOf(pinCodeField.getText());
                 } catch (NumberFormatException e) {
-                    pinCodeField.setText("");
+                    dialog.dispose();
                 }
-                Optional<Card> optionalCard = AuthorizationSystem.authorize(number, pinCode);
+                Optional<Card> optionalCard = new AuthorizationSystem(numberOfBankAccount).authorize(numberOfBankAccount, pinCode);
                 if (optionalCard.isPresent()) {
                     card = optionalCard.get();
-                    dialog.dispose();
+                    authentificate = true;
                 } else {
-                    pinCodeField.setText("");
+                    dialog.dispose();
                 }
             }
         });
-
         dialog.setSize(250, 250);
         dialog.setVisible(true);
     }
