@@ -38,8 +38,13 @@ public class Main {
 
     static void enterAsUser() {
         frame.setName("Вставьте карту");
-        JTextField numberOfCardField = new JTextField("Номер карты");
-        JTextField pinCodeField = new JTextField("PIN CODE");
+        JLabel label1 = new JLabel("Номер карты");
+        JLabel label2 = new JLabel("пин-код");
+
+        JTextField numberOfCardField = new JTextField();
+        numberOfCardField.setColumns(30);
+        JTextField pinCodeField = new JTextField();
+        pinCodeField.setColumns(30);
         JButton button = new JButton("Подтвердить");
         button.addActionListener(new ActionListener() {
             @Override
@@ -49,20 +54,18 @@ public class Main {
                 try {
                     number = Integer.valueOf(numberOfCardField.getText());
                     pinCode = Integer.valueOf(pinCodeField.getText());
-                } catch (NumberFormatException e) {
                     numberOfCardField.setText("");
                     pinCodeField.setText("");
+                } catch (NumberFormatException ignored) {
                 }
                 if (new AuthorizationSystem(number).authorize(number, pinCode).isPresent()) {
-                    Creator.getUserUI(number);
-                } else {
-                    numberOfCardField.setText("");
-                    pinCodeField.setText("");
+                    Creator.getUserUI(Creator.getCard(number, pinCode));
                 }
             }
         });
-
+        panel.add(label1);
         panel.add(numberOfCardField);
+        panel.add(label2);
         panel.add(pinCodeField);
         panel.add(button);
     }

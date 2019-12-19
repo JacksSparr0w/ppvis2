@@ -1,6 +1,7 @@
 package com.ppvis.lab2;
 
 import com.ppvis.lab2.bean.BankAccount;
+import com.ppvis.lab2.bean.Card;
 import com.ppvis.lab2.bean.Cash;
 import com.ppvis.lab2.bean.PinCode;
 import com.ppvis.lab2.ui.SupervisorMode;
@@ -15,8 +16,8 @@ public class Creator {
         return new Cash(amount);
     }
 
-    static UserUI getUserUI(Integer number) {
-        return new UserUI(number);
+    static UserUI getUserUI(Card card) {
+        return new UserUI(card);
     }
 
     static SupervisorMode getSupervisorMode() {
@@ -30,4 +31,6 @@ public class Creator {
     static PinCode getPinCode(Integer value) {
         return new PinCode(value);
     }
+
+    public static Card getCard(Integer number, Integer pincode){ return new Card(number, getPinCode(pincode));}
 }

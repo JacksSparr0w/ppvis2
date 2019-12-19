@@ -1,5 +1,8 @@
 package com.ppvis.lab2.bean;
 
+import com.ppvis.lab2.Creator;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +13,16 @@ public class ATM {
 
     private ATM() {
         all = new HashMap<>();
+        dataInitialize();
+    }
+
+    private void dataInitialize() {
+        for (int i = 1; i < 10; i++) {
+            all.put(i, Creator.getBankAccount(i));
+            for (int j = 1; j < 4; j++){
+                all.get(i).addCard(Creator.getCard(i, j * 1111));
+            }
+        }
     }
 
     public static ATM getInstance() {
@@ -28,7 +41,11 @@ public class ATM {
     }
 
     public List<Card> getCardByAccount(Integer number) {
-        return all.get(number).getCards();
+        if (all.containsKey(number)){
+            return all.get(number).getCards();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     public Double getBalance(Integer number) {

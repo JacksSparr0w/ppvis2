@@ -1,6 +1,5 @@
 package com.ppvis.lab2.ui;
 
-import com.ppvis.lab2.AuthorizationSystem;
 import com.ppvis.lab2.Creator;
 import com.ppvis.lab2.bean.ATM;
 import com.ppvis.lab2.bean.Card;
@@ -10,21 +9,23 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Optional;
 
 public class UserUI implements UserMode {
-    private Integer numberOfBankAccount;
     private Card card;
     private JFrame frame;
     private Container container;
     private JPanel mainPanel;
-    private boolean authentificate;
+    private volatile Boolean authentificate = Boolean.FALSE;
 
-    public UserUI(Integer number) {
-        this.numberOfBankAccount = number;
-        createInterface();
+    public UserUI(Card card) {
+        this.card = card;
         frame = new JFrame();
         container = frame.getContentPane();
+        createInterface();
+
+        frame.setSize(new Dimension(350, 350));
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
     public void createInterface() {
@@ -39,7 +40,7 @@ public class UserUI implements UserMode {
                 }
                 JDialog dialog = new JDialog(frame, "Снять наличные");
                 JTextField summa = new JTextField("Сумма");
-                JLabel label = new JLabel("Доступно: " + ATM.getInstance().getBalance(numberOfBankAccount) + " BYN"); //TODO
+                JLabel label = new JLabel("Доступно: " + ATM.getInstance().getBalance(card.getNumber()) + " BYN"); //TODO
                 JButton button = new JButton("Подтвердить");
                 button.addActionListener(new ActionListener() {
                     @Override
@@ -56,29 +57,62 @@ public class UserUI implements UserMode {
 
                 dialog.setSize(250, 250);
                 dialog.setVisible(true);
-
-
             }
         });
         JButton fillBalanceButton = new JButton("Пополнить счет");
         fillBalanceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                authentificate();
+                if (!authentificate) {
+                    return;
+                }
+                JDialog dialog = new JDialog(frame, "Пополнить наличные");
+                JTextField summa = new JTextField("Сумма");
+                JButton button = new JButton("Подтвердить");
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        Integer amount = null;
+                        try {
+                            amount = Integer.valueOf(summa.getText());
+                        } catch (NumberFormatException e) {
+                            dialog.dispose();
+                        }
+                        fillBalance(Creator.getCash(amount));
+                    }
+                });
 
+                dialog.add(summa);
+                dialog.add(button);
+                dialog.setSize(250, 250);
+                dialog.setVisible(true);
             }
         });
         JButton viewBalanceButton = new JButton("Посмотреть баланс");
         viewBalanceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                authentificate();
 
+                if (!authentificate) {
+                    return;
+                }
+                JDialog dialog = new JDialog(frame, "Снять наличные");
+                JPanel panel = new JPanel();
+                JLabel label = new JLabel("Доступно: " + ATM.getInstance().getBalance(card.getNumber()) + " BYN");
+
+                panel.add(label);
+                dialog.add(panel);
+                dialog.setSize(250, 250);
+                dialog.setVisible(true);
             }
         });
         JButton takeOffCardButton = new JButton("Забрать карту");
         takeOffCardButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                finish();
             }
         });
 
@@ -94,24 +128,26 @@ public class UserUI implements UserMode {
     }
 
     void takeCash(Cash cash) {
-        ATM.getInstance().takeCash(numberOfBankAccount, cash);
+        ATM.getInstance().takeCash(card.getNumber(), cash);
     }
 
     void fillBalance(Cash cash) {
-        ATM.getInstance().fillBalance(numberOfBankAccount, cash);
+        ATM.getInstance().fillBalance(card.getNumber(), cash);
     }
 
     void viewBalance() {
-
+        ATM.getInstance().getBalance(card.getNumber());
     }
 
     void finish() {
-
+        frame.dispose();
     }
 
-    private void authentificate() {
+    private boolean authentificate() {
         JDialog dialog = new JDialog(frame, "Введите пин-код");
-        JTextField pinCodeField = new JTextField("пин-код");
+        JPanel panel = new JPanel();
+        JTextField pinCodeField = new JTextField();
+        pinCodeField.setColumns(15);
         JButton button = new JButton("ввод");
         button.addActionListener(new ActionListener() {
             @Override
@@ -120,19 +156,21 @@ public class UserUI implements UserMode {
                 try {
                     pinCode = Integer.valueOf(pinCodeField.getText());
                 } catch (NumberFormatException e) {
-                    dialog.dispose();
+                    pinCodeField.setText("");
                 }
-                Optional<Card> optionalCard = new AuthorizationSystem(numberOfBankAccount).authorize(numberOfBankAccount, pinCode);
-                if (optionalCard.isPresent()) {
-                    card = optionalCard.get();
+                if (card.getPinCode().equals(pinCode)) {
                     authentificate = true;
-                } else {
-                    dialog.dispose();
                 }
+                dialog.dispose();
             }
         });
+        panel.add(pinCodeField);
+        panel.add(button);
+        dialog.add(panel);
+
         dialog.setSize(250, 250);
         dialog.setVisible(true);
+        return authentificate;
     }
 
 }

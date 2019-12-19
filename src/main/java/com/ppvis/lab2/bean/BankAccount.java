@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,6 +17,7 @@ public class BankAccount {
     private List<Card> cards;
 
     public BankAccount(Integer number){
+        cards = new ArrayList<>();
         this.number = number;
         balance = 0d;
     }
