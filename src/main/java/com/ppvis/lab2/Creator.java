@@ -28,7 +28,7 @@ public class Creator {
         return Role.valueOf(value.toUpperCase());
     }
 
-    static PinCode getPinCode(Integer value) {
+    public static PinCode getPinCode(Integer value) {
         return new PinCode(value);
     }
 
