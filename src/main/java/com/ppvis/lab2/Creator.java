@@ -7,6 +7,8 @@ import com.ppvis.lab2.bean.PinCode;
 import com.ppvis.lab2.ui.SupervisorMode;
 import com.ppvis.lab2.ui.UserUI;
 
+import javax.swing.*;
+
 public class Creator {
     public static BankAccount getBankAccount(Integer number) {
         return new BankAccount(number);
@@ -16,12 +18,16 @@ public class Creator {
         return new Cash(amount);
     }
 
-    static UserUI getUserUI(Card card) {
-        return new UserUI(card);
+    public static Cash getCash(Integer amount, Integer nominal){
+        return new Cash(amount, nominal);
     }
 
-    static SupervisorMode getSupervisorMode() {
-        return new SupervisorMode();
+    static UserUI getUserUI(Card card, JFrame frame) {
+        return new UserUI(card, frame);
+    }
+
+    static SupervisorMode getSupervisorMode(JFrame frame) {
+        return new SupervisorMode(frame);
     }
 
     static Role getRole(String value) {

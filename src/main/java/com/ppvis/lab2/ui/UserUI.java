@@ -13,12 +13,12 @@ import java.awt.event.ActionListener;
 
 public class UserUI implements UserMode {
     private Card card;
-    private JFrame frame;
+    private JDialog frame;
     private Container container;
 
-    public UserUI(Card card) {
+    public UserUI(Card card, JFrame parent) {
         this.card = card;
-        frame = new JFrame();
+        frame = new JDialog(parent, true);
         container = frame.getContentPane();
         createInterface();
 
@@ -180,6 +180,14 @@ public class UserUI implements UserMode {
                             panel.remove(pinCodeField);
                             panel.remove(button);
                             panel.add(new JLabel("Доступно: " + ATM.getInstance().getBalance(card.getNumber()) + " BYN"));
+                            JButton continueButton = new JButton("Продолжить");
+                            continueButton.addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    dialog.dispose();
+                                }
+                            });
+                            panel.add(continueButton);
                             dialog.validate();
                             dialog.repaint();
                         } else {
@@ -214,7 +222,7 @@ public class UserUI implements UserMode {
     }
 
     public void changeMode() {
-
+        frame.dispose();
     }
 
     void takeCash(Cash cash) {

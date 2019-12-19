@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 public class Cash {
     private Long id;
@@ -15,9 +14,30 @@ public class Cash {
     private Integer amount;
 
     public Cash(Integer amount){
-        this.amount = amount;
         id = 1L;
-        nominal = "";
-
+        this.amount = amount;
+        nominal = "1";
     }
+
+    public Cash(Integer amount, Integer nominal){
+        id = 1L;
+        this.amount = amount;
+        this.nominal = String.valueOf(nominal);
+    }
+
+    public Cash(Cash cash){
+        this.amount = new Integer(cash.amount.intValue());
+        this.nominal = cash.nominal;
+        this.id = cash.id;
+    }
+
+    public void addAmount(Integer amount){
+        this.amount += amount;
+    }
+
+    public Integer getNominal(){
+        return Integer.valueOf(nominal);
+    }
+
+
 }

@@ -12,6 +12,7 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 public class BankAccount {
+    private List<Cash> cash;
     private Integer number;
     private Double balance;
     private List<Card> cards;

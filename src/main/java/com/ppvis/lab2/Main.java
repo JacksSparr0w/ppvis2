@@ -1,9 +1,10 @@
 package com.ppvis.lab2;
 
+import com.ppvis.lab2.bean.ATM;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 public class Main {
     private static JFrame frame;
@@ -23,7 +24,6 @@ public class Main {
                 enterAsSupervisor();
             }
         });
-
         enterAsUser();
 
         menu.add(supervisor);
@@ -37,40 +37,92 @@ public class Main {
     }
 
     static void enterAsUser() {
-        frame.setName("Вставьте карту");
-        JLabel label1 = new JLabel("Номер карты");
+        frame.addWindowFocusListener(new WindowFocusListener() {
+            @Override
+            public void windowGainedFocus(WindowEvent e) {
+                if (ATM.getInstance().isWork()) {
+                    frame.setName("Вставьте карту");
+                    JLabel label1 = new JLabel("Номер карты");
+                    JLabel label2 = new JLabel("пин-код");
+
+                    JTextField numberOfCardField = new JTextField("");
+                    numberOfCardField.setColumns(30);
+                    JTextField pinCodeField = new JTextField("");
+                    pinCodeField.setColumns(30);
+                    JButton button = new JButton("Подтвердить");
+                    button.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent actionEvent) {
+                            Integer number = null;
+                            Integer pinCode = null;
+                            try {
+                                number = Integer.valueOf(numberOfCardField.getText());
+                                pinCode = Integer.valueOf(pinCodeField.getText());
+                                numberOfCardField.setText("");
+                                pinCodeField.setText("");
+                            } catch (NumberFormatException ignored) {
+                            }
+                            if (number != null && pinCode != null && number > 0 && new AuthorizationSystem(number).authorize(number, pinCode).isPresent()) {
+                                Creator.getUserUI(Creator.getCard(number, pinCode), frame);
+                            }
+                        }
+                    });
+                    panel.removeAll();
+                    panel.add(label1);
+                    panel.add(numberOfCardField);
+                    panel.add(label2);
+                    panel.add(pinCodeField);
+                    panel.add(button);
+                    panel.validate();
+                    panel.repaint();
+                } else {
+                    panel.removeAll();
+                    panel.add(new JLabel("Банкомат выключен"));
+                    panel.validate();
+                    panel.repaint();
+                }
+            }
+
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+
+            }
+        });
+    }
+
+    static void enterAsSupervisor() {
+        JFrame frame = new JFrame();
+        Container container = frame.getContentPane();
+        JPanel panel = new JPanel();
+        frame.setName("Введите пин-код техподдержки");
         JLabel label2 = new JLabel("пин-код");
 
-        JTextField numberOfCardField = new JTextField();
-        numberOfCardField.setColumns(30);
         JTextField pinCodeField = new JTextField();
         pinCodeField.setColumns(30);
         JButton button = new JButton("Подтвердить");
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                Integer number = null;
                 Integer pinCode = null;
                 try {
-                    number = Integer.valueOf(numberOfCardField.getText());
                     pinCode = Integer.valueOf(pinCodeField.getText());
-                    numberOfCardField.setText("");
                     pinCodeField.setText("");
                 } catch (NumberFormatException ignored) {
                 }
-                if (new AuthorizationSystem(number).authorize(number, pinCode).isPresent()) {
-                    Creator.getUserUI(Creator.getCard(number, pinCode));
+                if (new AuthorizationSystem(-1).authorize(-1, pinCode).isPresent()) {
+                    Creator.getSupervisorMode(frame);
+                    frame.dispose();
                 }
             }
         });
-        panel.add(label1);
-        panel.add(numberOfCardField);
         panel.add(label2);
         panel.add(pinCodeField);
         panel.add(button);
-    }
 
-    static void enterAsSupervisor() {
-        Creator.getSupervisorMode();
+        container.add(panel);
+
+        frame.setSize(new Dimension(350, 350));
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }
