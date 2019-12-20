@@ -20,7 +20,7 @@ public class SupervisorMode implements UserMode {
         container = frame.getContentPane();
         createInterface();
 
-        frame.setSize(new Dimension(350, 350));
+        frame.setSize(new Dimension(400, 350));
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

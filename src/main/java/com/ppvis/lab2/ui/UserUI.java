@@ -2,6 +2,7 @@ package com.ppvis.lab2.ui;
 
 import com.ppvis.lab2.Creator;
 import com.ppvis.lab2.bean.ATM;
+import com.ppvis.lab2.bean.BankAccount;
 import com.ppvis.lab2.bean.Card;
 import com.ppvis.lab2.bean.Cash;
 import lombok.SneakyThrows;
@@ -13,16 +14,18 @@ import java.awt.event.ActionListener;
 
 public class UserUI implements UserMode {
     private Card card;
+    private BankAccount bankAccount;
     private JDialog frame;
     private Container container;
 
     public UserUI(Card card, JFrame parent) {
         this.card = card;
+        this.bankAccount = Creator.getBankAccount(card.getNumber());
         frame = new JDialog(parent, true);
         container = frame.getContentPane();
         createInterface();
 
-        frame.setSize(new Dimension(350, 350));
+        frame.setSize(new Dimension(400, 350));
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

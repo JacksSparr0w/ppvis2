@@ -10,6 +10,11 @@ import com.ppvis.lab2.ui.UserUI;
 import javax.swing.*;
 
 public class Creator {
+
+    public static void initialize(){
+
+    }
+
     public static BankAccount getBankAccount(Integer number) {
         return new BankAccount(number);
     }

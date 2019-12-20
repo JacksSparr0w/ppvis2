@@ -1,6 +1,7 @@
 package com.ppvis.lab2;
 
 import com.ppvis.lab2.bean.ATM;
+import com.ppvis.lab2.ui.UserMode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +10,7 @@ import java.awt.event.*;
 public class Main {
     private static JFrame frame;
     private static JPanel panel;
+    private static UserMode ui;
 
     public static void main(String... arg) {
         frame = new JFrame();
@@ -31,7 +33,7 @@ public class Main {
         frame.setJMenuBar(menuBar);
         container.add(panel);
 
-        frame.setSize(new Dimension(350, 350));
+        frame.setSize(new Dimension(400, 350));
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
@@ -63,7 +65,7 @@ public class Main {
                             } catch (NumberFormatException ignored) {
                             }
                             if (number != null && pinCode != null && number > 0 && new AuthorizationSystem(number).authorize(number, pinCode).isPresent()) {
-                                Creator.getUserUI(Creator.getCard(number, pinCode), frame);
+                                ui = Creator.getUserUI(Creator.getCard(number, pinCode), frame);
                             }
                         }
                     });
@@ -110,7 +112,7 @@ public class Main {
                 } catch (NumberFormatException ignored) {
                 }
                 if (new AuthorizationSystem(-1).authorize(-1, pinCode).isPresent()) {
-                    Creator.getSupervisorMode(frame);
+                    ui = Creator.getSupervisorMode(frame);
                     frame.dispose();
                 }
             }
@@ -121,7 +123,7 @@ public class Main {
 
         container.add(panel);
 
-        frame.setSize(new Dimension(350, 350));
+        frame.setSize(new Dimension(400, 350));
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }

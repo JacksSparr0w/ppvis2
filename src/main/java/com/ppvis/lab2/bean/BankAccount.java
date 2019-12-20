@@ -1,8 +1,6 @@
 package com.ppvis.lab2.bean;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -17,29 +15,29 @@ public class BankAccount {
     private Double balance;
     private List<Card> cards;
 
-    public BankAccount(Integer number){
+    public BankAccount(Integer number) {
         cards = new ArrayList<>();
         this.number = number;
         balance = 0d;
     }
 
-    public double lostOnBalance(){      //???!?!!?
+    public double lostOnBalance() {
         return getBalance();
     }
 
-    public void addCard(Card card){
+    public void addCard(Card card) {
         cards.add(card);
     }
 
-    public boolean takeCash(Cash cash){
-        if (cash.getAmount() > balance){
+    public boolean takeCash(Cash cash) {
+        if (cash.getAmount() > balance) {
             return false;
         }
         balance -= cash.getAmount();
         return true;
     }
 
-    public void fillBalance(Cash cash){
+    public void fillBalance(Cash cash) {
         balance += cash.getAmount();
     }
 
